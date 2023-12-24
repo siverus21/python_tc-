@@ -9,7 +9,7 @@ BUFSIZE = 1024 # размер буфера
 tcpClientSocket = socket(AF_INET, SOCK_STREAM) # Создание клиента 
 tcpClientSocket.connect(ADDR) # устанавливаем подключение
 
-f = open('client_files/send_file.txt', 'rb')
+f = open('client_files/image.jpg', 'rb')
 
 send_data = ""
 
