@@ -1,29 +1,44 @@
-# файл server.py
-from socket import * # Импорт библиотеки
+# файл client.py
+from socket import *
 import os
+import time
 
-HOST = '127.0.0.1' # ip хоста
-PORT = 3000 # порт хоста
-ADDR = (HOST, PORT) # записываем все в одну переменную
-BUFSIZE = 1024 # размер буфера 
+HOST = '127.0.0.1'
+PORT = 3000
+ADDR = (HOST, PORT)
+BUFSIZE = 1024
 
-tcpClientSocket = socket(AF_INET, SOCK_STREAM) # Создание клиента 
-tcpClientSocket.connect(ADDR) # устанавливаем подключение
+tcpClientSocket = socket(AF_INET, SOCK_STREAM)
+tcpClientSocket.connect(ADDR)
 
-file_name = input('Enter file name: ')
-file_size = os.path.getsize(f'client_files/{file_name}')
-send_file_size = 0
+file_names = ["20MB.bin", "50MB.bin", "100MB.bin"]
 
-tcpClientSocket.send(file_name.encode())
+# Отправляем количество файлов
+tcpClientSocket.send(str(len(file_names)).encode())
 
-f = open(f'client_files/{file_name}', 'rb')
+for name in file_names:
+    print(name)
+    file_name = name
+    file_size = os.path.getsize(f'client_files/{file_name}')
+    send_file_size = 0
 
-send_data = ""
+    tcpClientSocket.send(file_name.encode())
+    tcpClientSocket.send(str(file_size).encode())  # Отправляем размер файла
 
-while send_data != b"":
-    send_data = f.read(BUFSIZE)
-    tcpClientSocket.send(send_data)
-    send_file_size+=len(send_data)
-    print(100/(file_size / send_file_size), '%')
+    f = open(f'client_files/{file_name}', 'rb')
 
-tcpClientSocket.close() # Закрываем подключение 
+    start_time = time.time()
+
+    send_data = ""
+
+    while send_data != b"":
+        send_data = f.read(BUFSIZE)
+        tcpClientSocket.send(send_data)
+        send_file_size += len(send_data)
+
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+
+    print(f"Time taken for {name}: {elapsed_time} seconds")
+
+tcpClientSocket.close()
