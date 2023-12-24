@@ -12,7 +12,9 @@ tcpServerSocket.listen(2) # Устанавливаем ограничение п
 
 tcpClientSocket, addr = tcpServerSocket.accept() #  ожидание подключения клиента
 
-f = open('server_files/image.jpg', 'wb')
+file_name = tcpClientSocket.recv(BUFSIZE).decode()
+
+f = open(f'server_files/{file_name}', 'wb')
 
 while True:
     taked_data = tcpClientSocket.recv(BUFSIZE)

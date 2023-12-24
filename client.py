@@ -1,5 +1,6 @@
 # файл server.py
 from socket import * # Импорт библиотеки
+import os
 
 HOST = '127.0.0.1' # ip хоста
 PORT = 3000 # порт хоста
@@ -9,7 +10,11 @@ BUFSIZE = 1024 # размер буфера
 tcpClientSocket = socket(AF_INET, SOCK_STREAM) # Создание клиента 
 tcpClientSocket.connect(ADDR) # устанавливаем подключение
 
-f = open('client_files/image.jpg', 'rb')
+file_name = input('Enter file name: ')
+
+tcpClientSocket.send(file_name.encode())
+
+f = open(f'client_files/{file_name}', 'rb')
 
 send_data = ""
 
