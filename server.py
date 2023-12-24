@@ -1,18 +1,40 @@
-# файл server.py
-from socket import * # Импорт библиотеки
+import socket
+import os
 
-HOST = '127.0.0.1' # ip хоста
-PORT = 3000 # порт хоста
-ADDR = (HOST, PORT) # записываем все в одну переменную
-BUFSIZE = 1024 # размер буфера 
+def start_server():
+    # Создаем сокет
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+    # Получаем имя хоста
+    host = socket.gethostname()
+    port = 12345
+    
+    # Привязываем сокет к заданному адресу и порту
+    server_socket.bind((host, port))
+    
+    # Слушаем до 5 запросов
+    server_socket.listen(5)
+    
+    print(f"Ждем подключения на {host}:{port}...")
+    
+    while True:
+        # Принимаем подключение
+        client_socket, addr = server_socket.accept()
+        print(f"Подключено от {addr}")
+        
+        # Принимаем имя файла
+        file_name = client_socket.recv(1024).decode()
+        
+        # Принимаем и сохраняем файл
+        with open(file_name, 'wb') as f:
+            while True:
+                data = client_socket.recv(1024)
+                if not data:
+                    break
+                f.write(data)
+        
+        print(f"Файл '{file_name}' успешно получен")
+        client_socket.close()
 
-tcpServerSocket = socket(AF_INET, SOCK_STREAM) # Создание tcp сервера
-tcpServerSocket.bind(ADDR) # Устанавливаем привязку адреса
-tcpServerSocket.listen(2) # Устанавливаем ограничение подключений 
-
-tcpClientSocket, addr = tcpServerSocket.accept() #  ожидание подключения клиента
-
-print(tcpClientSocket.recv(BUFSIZE)) # Полученная информация 
-
-tcpServerSocket.close() # Закрываем сервер
-tcpClientSocket.close() # Закрываем клиент
+if __name__ == "__main__":
+    start_server()
