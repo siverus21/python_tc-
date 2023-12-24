@@ -12,7 +12,14 @@ tcpServerSocket.listen(2) # Устанавливаем ограничение п
 
 tcpClientSocket, addr = tcpServerSocket.accept() #  ожидание подключения клиента
 
-print(tcpClientSocket.recv(BUFSIZE)) # Полученная информация 
+f = open('server_files/take_file.txt', 'wb')
 
+while True:
+    taked_data = tcpClientSocket.recv(BUFSIZE)
+    if not taked_data:
+        break
+    f.write(taked_data)
+
+    
 tcpServerSocket.close() # Закрываем сервер
 tcpClientSocket.close() # Закрываем клиент

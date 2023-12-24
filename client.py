@@ -9,6 +9,12 @@ BUFSIZE = 1024 # размер буфера
 tcpClientSocket = socket(AF_INET, SOCK_STREAM) # Создание клиента 
 tcpClientSocket.connect(ADDR) # устанавливаем подключение
 
-tcpClientSocket.send('HELLO'.encode()) # Передаем сообщение 
+f = open('client_files/send_file.txt', 'rb')
+
+send_data = ""
+
+while send_data != b"":
+    send_data = f.read(BUFSIZE)
+    tcpClientSocket.send(send_data)
 
 tcpClientSocket.close() # Закрываем подключение 
