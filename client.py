@@ -1,6 +1,6 @@
 import socket
 
-def send_file(file_path):
+def echo_client(message):
     # Создаем сокет
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
@@ -11,20 +11,16 @@ def send_file(file_path):
     # Подключаемся к серверу
     client_socket.connect((host, port))
     
-    # Отправляем имя файла
-    file_name = os.path.basename(file_path)
-    client_socket.send(file_name.encode())
+    # Отправляем сообщение серверу
+    client_socket.send(message.encode())
     
-    # Отправляем файл
-    with open(file_path, 'rb') as f:
-        data = f.read(1024)
-        while data:
-            client_socket.send(data)
-            data = f.read(1024)
+    # Получаем и выводим ответ от сервера
+    data = client_socket.recv(1024)
+    print(f"Получено от сервера: {data.decode()}")
     
-    print(f"Файл '{file_name}' успешно отправлен")
+    # Закрываем соединение
     client_socket.close()
 
 if __name__ == "__main__":
-    file_path = "путь_к_вашему_файлу"
-    send_file(file_path)
+    message = "Привет, сервер! Это сообщение от клиента."
+    echo_client(message)

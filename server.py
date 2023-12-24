@@ -1,7 +1,6 @@
 import socket
-import os
 
-def start_server():
+def echo_server():
     # Создаем сокет
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
@@ -15,26 +14,22 @@ def start_server():
     # Слушаем до 5 запросов
     server_socket.listen(5)
     
-    print(f"Ждем подключения на {host}:{port}...")
+    print(f"Эхо-сервер запущен на {host}:{port}...")
     
     while True:
         # Принимаем подключение
         client_socket, addr = server_socket.accept()
         print(f"Подключено от {addr}")
         
-        # Принимаем имя файла
-        file_name = client_socket.recv(1024).decode()
+        # Получаем данные от клиента и отправляем обратно
+        data = client_socket.recv(1024)
+        while data:
+            print(f"Получено: {data.decode()}")
+            client_socket.send(data)
+            data = client_socket.recv(1024)
         
-        # Принимаем и сохраняем файл
-        with open(file_name, 'wb') as f:
-            while True:
-                data = client_socket.recv(1024)
-                if not data:
-                    break
-                f.write(data)
-        
-        print(f"Файл '{file_name}' успешно получен")
+        print("Подключение закрыто")
         client_socket.close()
 
 if __name__ == "__main__":
-    start_server()
+    echo_server()
