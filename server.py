@@ -1,36 +1,32 @@
 import socket
 
-def echo_server():
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    host = "192.168.0.143"
-    port = 12345
+# Создание сокета
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    try:
-        server_socket.bind((host, port))
-        server_socket.listen(5)
-        print(f"Эхо-сервер запущен на {host}:{port}...")
+# Связывание сокета с адресом и портом
+server_address = ('localhost', 12345)
+server_socket.bind(server_address)
 
-        while True:
-            client_socket, addr = server_socket.accept()
-            print(f"Подключено от {addr}")
+# Начало прослушивания входящих соединений
+server_socket.listen(1)
 
-            try:
-                data = client_socket.recv(1024)
-                while data:
-                    print(f"Получено: {data.decode()}")
-                    client_socket.send(data)
-                    data = client_socket.recv(1024)
+print("Ждем подключения клиента...")
 
-                print("Подключение закрыто")
-            except Exception as e:
-                print(f"Ошибка при обработке подключения: {e}")
-            finally:
-                client_socket.close()
+# Принятие входящего соединения
+client_socket, client_address = server_socket.accept()
+print("Подключен клиент:", client_address)
 
-    except Exception as e:
-        print(f"Произошла ошибка: {e}")
-    finally:
-        server_socket.close()
+try:
+    while True:
+        # Получение сообщения от клиента
+        data = client_socket.recv(1024)
+        if data:
+            print("Клиент:", data.decode())
 
-if __name__ == "__main__":
-    echo_server()
+            # Отправка ответа клиенту
+            message = input("Сообщение для клиента: ")
+            client_socket.sendall(message.encode())
+finally:
+    # Закрытие соединения
+    client_socket.close()
+    server_socket.close()

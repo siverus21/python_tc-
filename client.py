@@ -1,22 +1,22 @@
 import socket
 
-def send_data(message):
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    host = "192.168.0.143"  # Замените на IP-адрес вашего сервера
-    port = 12345
+# Создание сокета
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    try:
-        client_socket.connect((host, port))
-        client_socket.send(message.encode())
+# Подключение к серверу
+server_address = ('localhost', 12345)
+client_socket.connect(server_address)
 
+try:
+    while True:
+        # Отправка сообщения серверу
+        message = input("сообщение для Сервера: ")
+        client_socket.sendall(message.encode())
+
+        # Получение ответа от сервера
         data = client_socket.recv(1024)
-        print(f"Получено от сервера: {data.decode()}")
-
-    except Exception as e:
-        print(f"Произошла ошибка: {e}")
-    finally:
-        client_socket.close()
-
-if __name__ == "__main__":
-    message = "Привет, сервер! Это сообщение от клиента."
-    send_data(message)
+        if data:
+            print("Сервер:", data.decode())
+finally:
+    # Закрытие соединения
+    client_socket.close()
