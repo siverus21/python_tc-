@@ -8,15 +8,25 @@ server_address = ('localhost', 12345)
 client_socket.connect(server_address)
 
 try:
+    actions = ["l", "r", "t", "b"]
     while True:
-        # Отправка сообщения серверу
-        message = input("сообщение для Сервера: ")
-        client_socket.sendall(message.encode())
+        # Получение команды от сервера
+        command = client_socket.recv(1024).decode()
+        print("Получена команда от сервера:", command)
 
-        # Получение ответа от сервера
-        data = client_socket.recv(1024)
-        if data:
-            print("Сервер:", data.decode())
+        # Выполнение команды и отправка результата
+        command_parts = command.split(",")
+        action = command_parts[0]
+        value = int(command_parts[1])
+        
+        # Выполнение действия в зависимости от команды
+        if actions.count(action):
+            response = f"Выполнено"
+        else:
+            response = "Неверная команда"
+
+        # Отправка результата выполнения обратно серверу
+        client_socket.sendall(response.encode())
 finally:
     # Закрытие соединения
     client_socket.close()
