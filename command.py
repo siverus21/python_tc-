@@ -9,8 +9,6 @@ CONST_END_HEIGHT = 0
 # Шаг поворота камеры 
 defaul_step = 30
 
-# Словарь с описаниями функций
-
 commands = {
     "l": "Переместить объект влево на указанное количество градусов.",
     "r": "Переместить объект вправо на указанное количество градусов.",
@@ -40,3 +38,7 @@ def CheckResponse(respones):
         return "OK"
     else:
         return "error"
+
+
+def EndProgram():
+    return "END"
