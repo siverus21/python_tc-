@@ -13,8 +13,10 @@ def receive_command(client_socket):
         command = client_socket.recv(1024).decode()
         print("Получена команда от сервера:", command)
         return command
-    except:
-        return 'error'
+    except socket.error as e:
+        if e.errno == errno.EPIPE:
+            print("Соединение было разорвано")
+            return f"u {TH}"
 
 def send_response(client_socket, response):
     try:

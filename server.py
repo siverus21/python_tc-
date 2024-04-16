@@ -37,7 +37,7 @@ def run_camera_control_server():
     try:
         height_now = CONST_START_HEIGHT
         position_is_left = True
-        while height_now != CONST_END_HEIGHT:
+        while height_now <= CONST_END_HEIGHT:
             angle_now = CONST_ANGLE_START
             while angle_now <= CONST_ANGLE_END:
                 client_socket.sendall(Photo().encode())
@@ -45,25 +45,26 @@ def run_camera_control_server():
                 if CheckResponse(response) != "OK":
                     break
                 if position_is_left:
-                    client_socket.sendall(Right_step(defaul_step).encode())
+                    client_socket.sendall(Right_step(DEFAULT_STEP).encode())
                 else:
-                    client_socket.sendall(Left_step(defaul_step).encode())
+                    client_socket.sendall(Left_step(DEFAULT_STEP).encode())
                 response = client_socket.recv(1024).decode()
                 if CheckResponse(response) != "OK":
                     break
                 else:
-                    angle_now += defaul_step
+                    angle_now += DEFAULT_STEP
                     print(angle_now)
             if response != "OK":
                 client_socket.sendall(Up_step(abs(height_now)).encode())
             position_is_left = not position_is_left
-            if height_now == CONST_END_HEIGHT - 1:
+            if height_now == CONST_END_HEIGHT:
                 client_socket.sendall(EndProgram().encode())
                 break
             else:
                 height_now += 1
                 client_socket.sendall(Up_step(height_now).encode())
                 response = client_socket.recv(1024).decode()
+        print(height_now)
     finally:
         close_connections(server_socket, client_socket)
 
