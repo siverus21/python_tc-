@@ -1,10 +1,11 @@
 import socket
 from command import *
 import time
+import errno
 
 def initialize_server():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_address = ('localhost', 12345)
+    server_address = ('192.168.31.52', 9090)
     server_socket.bind(server_address)
     server_socket.listen(1)
     print("Ждем подключения клиента...")
@@ -35,36 +36,52 @@ def close_connections(server_socket, client_socket):
 def run_camera_control_server():
     server_socket, client_socket = initialize_server()
     try:
-        height_now = CONST_START_HEIGHT
-        position_is_left = True
-        while height_now <= CONST_END_HEIGHT:
-            angle_now = CONST_ANGLE_START
-            while angle_now <= CONST_ANGLE_END:
-                client_socket.sendall(Photo().encode())
+        client_socket.sendall("d".encode())
+        time.sleep(4)
+        response = client_socket.recv(1024).decode()
+        if(response == "1"):
+            client_socket.sendall("C".encode())
+            time.sleep(4)
+            response = client_socket.recv(1024).decode()
+            if(response == "1"):
+                print("Success")
+                client_socket.sendall(Right_step(DEFAULT_STEP).encode())
                 response = client_socket.recv(1024).decode()
-                if CheckResponse(response) != "OK":
-                    break
-                if position_is_left:
-                    client_socket.sendall(Right_step(DEFAULT_STEP).encode())
-                else:
-                    client_socket.sendall(Left_step(DEFAULT_STEP).encode())
-                response = client_socket.recv(1024).decode()
-                if CheckResponse(response) != "OK":
-                    break
-                else:
-                    angle_now += DEFAULT_STEP
-                    print(angle_now)
-            if response != "OK":
-                client_socket.sendall(Up_step(abs(height_now)).encode())
-            position_is_left = not position_is_left
-            if height_now == CONST_END_HEIGHT:
-                client_socket.sendall(EndProgram().encode())
-                break
+                print(response)
+                # height_now = CONST_START_HEIGHT
+                # position_is_left = True
+                # # while height_now <= CONST_END_HEIGHT:
+                # angle_now = CONST_ANGLE_START
+                # while angle_now <= CONST_ANGLE_END:
+                #     client_socket.sendall(Photo().encode())
+                #     response = client_socket.recv(1024).decode()
+                #     if CheckResponse(response) != "OK":
+                #         break
+                #     if position_is_left:
+                #         client_socket.sendall(Right_step(DEFAULT_STEP).encode())
+                #     else:
+                #         client_socket.sendall(Left_step(DEFAULT_STEP).encode())
+                #     response = client_socket.recv(1024).decode()
+                #     if CheckResponse(response) != "OK":
+                #         break
+                #     else:
+                #         angle_now += DEFAULT_STEP
+                #         print(angle_now)
+                #     # if response != "OK":
+                #     #     client_socket.sendall(Up_step(abs(height_now)).encode())
+                #     position_is_left = not position_is_left
             else:
-                height_now += 1
-                client_socket.sendall(Up_step(height_now).encode())
-                response = client_socket.recv(1024).decode()
-        print(height_now)
+                print("error C")
+        else:
+            print("error S")
+            # if height_now == CONST_END_HEIGHT:
+            #     client_socket.sendall(EndProgram().encode())
+            #     break
+            # else:
+            #     height_now += 1000
+            #     client_socket.sendall(Up_step(height_now).encode())
+            #     response = client_socket.recv(1024).decode()
+        # print(height_now)
     finally:
         close_connections(server_socket, client_socket)
 

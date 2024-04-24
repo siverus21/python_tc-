@@ -1,15 +1,15 @@
 # Стартовый угол слева
-CONST_ANGLE_START = 30
+CONST_ANGLE_START = 0
 # Конечный угол справа
-CONST_ANGLE_END = 150
+CONST_ANGLE_END = 500
 # Глубина дыры
-CONST_START_HEIGHT = -3
+CONST_START_HEIGHT = 0
 # Высота, которой мы должны достичь 
-CONST_END_HEIGHT = 0
+CONST_END_HEIGHT = 22000
 # Шаг поворота камеры 
-DEFAULT_STEP = 30
+DEFAULT_STEP = 50
 #Текущая высота 
-TH = -3
+# TH = -3
 
 commands = {
     "l": "Переместить объект влево на указанное количество градусов.",
